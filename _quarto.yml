@@ -10,8 +10,8 @@ project:
 website:
   page-navigation: true
   title: "Supports pédagogiques du module NTICA"
-  site-url: "https://ghmercier.github.io/ntica-data"
-  repo-url: "https://github.com/ghmercier/ntica-data"
+  site-url: "https://clementmandron.github.io/ntica-data"
+  repo-url: "https://github.com/clementmandron/ntica-data"
   repo-actions: [ issue ]
   sidebar:
     search: false
