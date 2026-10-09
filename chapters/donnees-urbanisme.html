@@ -299,7 +299,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Pour les ventes, utilisez la couche <a href="../resources/donnees-urbanisme/dvf_ca_pvm_2021_2025_etudiants.gpkg">DVF sur la CAPVM uniquement</a>, extraite à partir de cette <a href="https://www.data.gouv.fr/datasets/demandes-de-valeurs-foncieres-geolocalisees">source</a>.</li>
 <li>Pour le fond de carte, utilisez la couche <a href="../resources/donnees-urbanisme/ade_ca_pvm.gpkg">des communes de la CA PVM</a>, extraite de la base <a href="https://geoservices.ign.fr/adminexpress">AdminExpress</a> de l’IGN.</li>
 </ul>
-<p><strong>Les questions à se poser avant de foncer tête baissée dans les DVF</strong> - A quoi correspond une ligne du jeu de données ? Une mutation ? Un bien ? Une vente ? - Quelle surface utiliser pour calculer le prix au m2 ? (regardez bien les taux de remplissage) - A quoi correspond le prix de la vente ?</p>
+<p><strong>Les questions à se poser avant de foncer tête baissée dans les DVF</strong></p>
+<ul>
+<li>A quoi correspond une ligne du jeu de données ? Une mutation ? Un bien ? Une vente ?</li>
+<li>Quelle surface utiliser pour calculer le prix au m2 ? (regardez bien les taux de remplissage)</li>
+<li>A quoi correspond le prix de la vente ?</li>
+</ul>
 <section id="correction-cas-dusage-2-limites-connues-des-dvf-et-comment-les-traiter" class="level3">
 <h3 class="anchored" data-anchor-id="correction-cas-dusage-2-limites-connues-des-dvf-et-comment-les-traiter">Correction cas d’usage 2 : limites connues des DVF et comment les traiter</h3>
 <section id="méthode-a-avec-les-outils-qgis" class="level4">
@@ -364,7 +369,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Vérifier l’<strong>Aperçu du résultat</strong> sous la zone de saisie (un nombre doit s’afficher), puis <strong>OK</strong>.</p></li>
 <li><p>Enregistrer les modifications (icône crayon, puis enregistrer).</p></li>
 </ol>
-<p>Contrôle : trier la table par <code>id_mutation</code>. Les 18 lignes de <code>2021-1296940</code> doivent afficher <code>nb_biens = 9</code> ; les 3 lignes de <code>2021-1311764</code> doivent afficher <code>nb_biens = 1</code>.</p>
 <blockquote class="blockquote">
 <p>Ce que fait l’expression : pour chaque ligne, elle compte les logements et locaux de <strong>la vente à laquelle appartient cette ligne</strong>. Le <code>filter</code> est indispensable : sans lui, les caves, parkings et lignes de terrain seraient comptés, et on ne garderait que 587 ventes d’appartement au lieu de 6 352.</p>
 </blockquote>
@@ -386,11 +390,7 @@ AND "type_local" IN ('Appartement','Maison','Local industriel. commercial ou ass
 </section>
 <section id="limite-2-la-surface-bâtie-ne-mesure-pas-la-même-chose-pour-une-maison-et-un-appartement" class="level5">
 <h5 class="anchored" data-anchor-id="limite-2-la-surface-bâtie-ne-mesure-pas-la-même-chose-pour-une-maison-et-un-appartement">Limite 2 : la surface bâtie ne mesure pas la même chose pour une maison et un appartement</h5>
-<p><strong>Le problème.</strong> <code>surface_reelle_bati</code> est la seule surface remplie partout (100 % des ventes d’appartements et de maisons, contre 60 % pour la surface Carrez des appartements et 11 % pour celle des maisons). C’est donc elle qu’on utilise pour le prix au m². C’est bien la surface du logement <strong>tous étages confondus</strong>, pas l’emprise au sol : une maison de 5 pièces fait 102 m² en médiane. Mais pour une maison, le prix au m² est <strong>surestimé</strong> :</p>
-<ul>
-<li><strong>le terrain est inclus dans le prix</strong> (330 à 530 m² en médiane selon la taille de la maison), pas dans la surface ;</li>
-<li>garage et dépendances sont dans le prix, pas dans la surface.</li>
-</ul>
+<p><strong>Le problème.</strong> <code>surface_reelle_bati</code> est la seule surface remplie partout (100 % des ventes d’appartements et de maisons, contre 60 % pour la surface Carrez des appartements et 11 % pour celle des maisons). C’est donc elle qu’on utilise pour le prix au m². Pour une maison, le prix au m² est <strong>surestimé</strong> : <strong>le terrain est inclus dans le prix</strong> (330 à 530 m² en médiane selon la taille de la maison), pas dans la surface ;</p>
 <p><strong>La solution.</strong> Ne <strong>jamais mélanger</strong> maisons et appartements dans un même prix au m² : un type de bien par carte.</p>
 <p><strong>Étape 1 : ne garder qu’un type de bien</strong> (sur la couche issue de la limite 1)</p>
 <ol type="1">
@@ -415,19 +415,19 @@ AND "type_local" IN ('Appartement','Maison','Local industriel. commercial ou ass
 <pre><code>"surface_reelle_bati" &gt;= 10
 AND "prix_m2" BETWEEN 1000 AND 10000</code></pre></li>
 </ol>
-<p>Résultat attendu : <strong>6 320 ventes</strong> (dont une quarantaine sans coordonnées, qui ne tomberont dans aucune maille).</p>
+<p>Résultat attendu : <strong>6 320 ventes</strong></p>
 <hr>
 </section>
 <section id="limite-4-le-prix-est-celui-de-toute-la-vente-pas-du-seul-bien" class="level5">
 <h5 class="anchored" data-anchor-id="limite-4-le-prix-est-celui-de-toute-la-vente-pas-du-seul-bien">Limite 4 : le prix est celui de toute la vente, pas du seul bien</h5>
 <p><strong>Le problème.</strong> Une fois la ligne de l’appartement isolée, <code>valeur_fonciere</code> reste le <strong>prix total payé</strong> : il inclut la cave, le parking ou la part de terrain vendus avec, alors que la surface ne concerne que l’appartement. <strong>91 % des ventes d’appartements retenues comprennent au moins une dépendance.</strong> DVF ne donne pas la valeur de chaque bien : impossible de soustraire le prix du parking.</p>
-<p><strong>S’il est difficile de trouver une solution à ce problème, il est important de garder cette limite en tête.</strong></p>
+<p>S’il est difficile de trouver une solution à ce problème, <strong>il est important de garder cette limite en tête.</strong></p>
 <hr>
 </section>
 </section>
 <section id="méthode-b-en-sql-avec-une-couche-virtuelle-rapide-en-une-seule-étape" class="level4">
 <h4 class="anchored" data-anchor-id="méthode-b-en-sql-avec-une-couche-virtuelle-rapide-en-une-seule-étape">Méthode B : en SQL avec une couche virtuelle (rapide, en une seule étape)</h4>
-<p>La requête SQL ne compte qu’une seule fois et s’exécute en quelques secondes.</p>
+<p>La requête SQL s’exécute en quelques secondes.</p>
 <ol type="1">
 <li><p>Menu <strong>Couche › Créer une couche › Nouvelle couche virtuelle…</strong> &gt; Nom de la couche <code>dvf_filtrer_groupe</code></p></li>
 <li><p>Dans <strong>Couches intégrées</strong>, cliquer sur <strong>Importer…</strong>, choisir <code>dvf_ventes_brutes</code>, puis <strong>OK</strong>. Vérifier que son <strong>Nom local</strong> est bien <code>dvf_ventes_brutes</code> : c’est le nom à utiliser dans la requête. S’il est différent (par exemple <code>dvf_ca_pvm_2021_2025_etudiants — dvf_ventes_brutes</code>), le renommer <code>dvf_ventes_brutes</code> en double-cliquant dessus.</p></li>
@@ -458,17 +458,15 @@ AND "prix_m2" BETWEEN 1000 AND 10000</code></pre></li>
 <h4 class="anchored" data-anchor-id="récapitulatif-de-la-chaîne-de-traitement">Récapitulatif de la chaîne de traitement</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>#</th>
 <th>Outil QGIS</th>
 <th>Expression</th>
-<th>Lignes</th>
 </tr>
 </thead>
 <tbody>
@@ -476,43 +474,36 @@ AND "prix_m2" BETWEEN 1000 AND 10000</code></pre></li>
 <td>0</td>
 <td>Couche brute</td>
 <td></td>
-<td>41 508</td>
 </tr>
 <tr class="even">
 <td>1</td>
 <td>Calculatrice de champs (<code>nb_biens</code>, entier)</td>
 <td><code>count("id_mutation", group_by:="id_mutation", filter:="type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé'))</code></td>
-<td>41 508</td>
 </tr>
 <tr class="odd">
 <td>2</td>
 <td>Extraire par expression</td>
 <td><code>"nature_mutation" = 'Vente' AND "nb_biens" = 1 AND "type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé')</code></td>
-<td>à recompter</td>
 </tr>
 <tr class="even">
 <td>3</td>
 <td>Extraire par expression</td>
 <td><code>"type_local" = 'Appartement'</code></td>
-<td>6 352</td>
 </tr>
 <tr class="odd">
 <td>4</td>
 <td>Calculatrice de champs (<code>prix_m2</code>, réel)</td>
 <td><code>"valeur_fonciere" / "surface_reelle_bati"</code></td>
-<td>6 352</td>
 </tr>
 <tr class="even">
 <td>5</td>
 <td>Extraire par expression</td>
 <td><code>"surface_reelle_bati" &gt;= 10 AND "prix_m2" BETWEEN 1000 AND 10000</code></td>
-<td>6 320</td>
 </tr>
 <tr class="odd">
 <td>1-5</td>
 <td>Couche virtuelle (méthode B)</td>
 <td>Requête SQL « toute la chaîne » de la limite 1</td>
-<td>6 320</td>
 </tr>
 </tbody>
 </table>
