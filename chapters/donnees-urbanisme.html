@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -150,8 +185,11 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#ressources" id="toc-ressources" class="nav-link" data-scroll-target="#ressources">Ressources</a></li>
   <li><a href="#documentez-votre-travail" id="toc-documentez-votre-travail" class="nav-link" data-scroll-target="#documentez-votre-travail">Documentez votre travail</a></li>
+  </ul></li>
   <li><a href="#cas-dusage-1-densification-autour-des-gares" id="toc-cas-dusage-1-densification-autour-des-gares" class="nav-link" data-scroll-target="#cas-dusage-1-densification-autour-des-gares">Cas d’usage 1 : Densification autour des gares</a></li>
-  <li><a href="#cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm" id="toc-cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm" class="nav-link" data-scroll-target="#cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm">Cas d’usage 2 : Comprendre le marché de l’immobilier au sein de la CAPVM</a></li>
+  <li><a href="#cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm" id="toc-cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm" class="nav-link" data-scroll-target="#cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm">Cas d’usage 2 : Comprendre le marché de l’immobilier au sein de la CAPVM</a>
+  <ul class="collapse">
+  <li><a href="#correction-cas-dusage-2-limites-connues-des-dvf-et-comment-les-traiter" id="toc-correction-cas-dusage-2-limites-connues-des-dvf-et-comment-les-traiter" class="nav-link" data-scroll-target="#correction-cas-dusage-2-limites-connues-des-dvf-et-comment-les-traiter">Correction cas d’usage 2 : limites connues des DVF et comment les traiter</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/clementmandron/ntica-data/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
@@ -207,8 +245,9 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="https://drive.google.com/drive/folders/1IjSoepmjB-8jPEiiPwM8k6zvNa_SPCmC?usp=sharing">Déposez votre cartographie dans le dossier</a></li>
 </ul>
 </section>
-<section id="cas-dusage-1-densification-autour-des-gares" class="level3">
-<h3 class="anchored" data-anchor-id="cas-dusage-1-densification-autour-des-gares">Cas d’usage 1 : Densification autour des gares</h3>
+</section>
+<section id="cas-dusage-1-densification-autour-des-gares" class="level2">
+<h2 class="anchored" data-anchor-id="cas-dusage-1-densification-autour-des-gares">Cas d’usage 1 : Densification autour des gares</h2>
 <p><strong>Contexte</strong> : Le SDRIF-E (approuvé par décret du 10 juin 2025) impose d’accroître d’au moins 15 % le nombre de logements dans les espaces urbanisés des communes situées à environ 2 km d’une gare, existante ou en projet (GPE inclus), contre 13 % par défaut et 17 % dans les polarités de l’agglomération. Pour les quartiers des gares du GPE et d’Eole, il demande en plus de ne pas compromettre leur potentiel de logements et de centralités, avec une offre diversifiée, des équipements renforcés, de la mixité fonctionnelle et une conception exemplaire.</p>
 <p>Les élu.e.s des communes de Chelles se demandent si leur PLU permet de répondre à cet objectif de densification. Aussi, ils souhaitent se concentrer sur la densification des périmètres autour de la future gare du Grand Paris Express.</p>
 <p><strong>Question des élu.e.s :</strong> dans un rayon de 1 km autour de la gare, le PLU actuel permet-il de densifier, et où ?</p>
@@ -235,8 +274,8 @@ ul.task-list li input[type="checkbox"] {
 <li>Pour le fond de carte, utilisez la couche <a href="../resources/donnees-urbanisme/ade_ca_pvm.gpkg">des communes de la CA PVM</a>, extraite de la base <a href="https://geoservices.ign.fr/adminexpress">AdminExpress</a> de l’IGN.</li>
 </ul>
 </section>
-<section id="cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm" class="level3">
-<h3 class="anchored" data-anchor-id="cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm">Cas d’usage 2 : Comprendre le marché de l’immobilier au sein de la CAPVM</h3>
+<section id="cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm" class="level2">
+<h2 class="anchored" data-anchor-id="cas-dusage-2-comprendre-le-marché-de-limmobilier-au-sein-de-la-capvm">Cas d’usage 2 : Comprendre le marché de l’immobilier au sein de la CAPVM</h2>
 <p><strong>Contexte</strong> : La CA Paris-Vallée de la Marne réunit des tissus urbains très différents : centres anciens et quartiers pavillonnaires (Chelles, Vaires-sur-Marne, Pontault-Combault), quartiers de la ville nouvelle de Marne-la-Vallée (Noisiel, Lognes, Torcy, Champs-sur-Marne), et secteurs en mutation autour des futures gares du Grand Paris Express. Les élu.e.s souhaitent disposer d’une carte qui montre où le logement est accessible et où il devient cher, à une échelle plus fine que la commune.</p>
 <p><strong>Question des élu.e.s :</strong> comment le prix de l’immobilier au m² varie-t-il d’un quartier à l’autre de la CA PVM ?</p>
 <p><strong>Les étapes possibles :</strong></p>
@@ -250,12 +289,6 @@ ul.task-list li input[type="checkbox"] {
 <li>Calculer les variables sur les ventes
 <ul>
 <li>Libre à vous de décider quelle variable représenter (évolution 2021-2025 ? prix au m2 ?)</li>
-<li><ol type="1">
-<li><code>count("id_mutation", group_by:="id_mutation", filter:="type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé')) = 1</code></li>
-</ol></li>
-<li><ol start="2" type="1">
-<li><code>"type_local" = 'Appartement'</code></li>
-</ol></li>
 </ul></li>
 <li>Créer une grille et agréger les données des ventes sur la grille</li>
 <li>[Option] Ajouter un 2e cadre de carte avec le prix médian par commune</li>
@@ -266,8 +299,226 @@ ul.task-list li input[type="checkbox"] {
 <li>Pour les ventes, utilisez la couche <a href="../resources/donnees-urbanisme/dvf_ca_pvm_2021_2025_etudiants.gpkg">DVF sur la CAPVM uniquement</a>, extraite à partir de cette <a href="https://www.data.gouv.fr/datasets/demandes-de-valeurs-foncieres-geolocalisees">source</a>.</li>
 <li>Pour le fond de carte, utilisez la couche <a href="../resources/donnees-urbanisme/ade_ca_pvm.gpkg">des communes de la CA PVM</a>, extraite de la base <a href="https://geoservices.ign.fr/adminexpress">AdminExpress</a> de l’IGN.</li>
 </ul>
+<p><strong>Les questions à se poser avant de foncer tête baissée dans les DVF</strong> - A quoi correspond une ligne du jeu de données ? Une mutation ? Un bien ? Une vente ? - Quelle surface utiliser pour calculer le prix au m2 ? (regardez bien les taux de remplissage) - A quoi correspond le prix de la vente ?</p>
+<section id="correction-cas-dusage-2-limites-connues-des-dvf-et-comment-les-traiter" class="level3">
+<h3 class="anchored" data-anchor-id="correction-cas-dusage-2-limites-connues-des-dvf-et-comment-les-traiter">Correction cas d’usage 2 : limites connues des DVF et comment les traiter</h3>
+<section id="méthode-a-avec-les-outils-qgis" class="level4">
+<h4 class="anchored" data-anchor-id="méthode-a-avec-les-outils-qgis">Méthode A : avec les outils QGIS</h4>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Attention
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La méthode A est lente : pour chacune des 41 508 lignes, QGIS peut refaire le comptage sur toute la couche (plusieurs minutes). Pour une méthode plus rapide, voir méthode B.</p>
+</div>
+</div>
+<section id="limite-1-une-vente-occupe-plusieurs-lignes" class="level5">
+<h5 class="anchored" data-anchor-id="limite-1-une-vente-occupe-plusieurs-lignes">Limite 1 : une vente occupe plusieurs lignes</h5>
+<p><strong>Le problème.</strong> Une ligne DVF correspond à un <strong>bien</strong> (appartement, cave, parking, terrain), pas à une vente. Toutes les lignes d’une vente partagent le même <code>id_mutation</code>, et <strong>le prix total (<code>valeur_fonciere</code>) est recopié sur chaque ligne</strong>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Exemple</th>
+<th>id_mutation</th>
+<th>Lignes</th>
+<th>Conséquence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Appartement à Chelles, 250 000 €, avril 2021</td>
+<td><code>2021-1311764</code></td>
+<td>3 (appartement + dépendance + terrain)</td>
+<td>Vente comptée 3 fois si on ne dédoublonne pas</td>
+</tr>
+<tr class="even">
+<td>Immeuble à Pontault-Combault, 1 893 048 €, juillet 2021</td>
+<td><code>2021-1296940</code></td>
+<td>18 (9 appartements + 9 dépendances)</td>
+<td>Prix au m² absurde (1 893 048 / 44 m² = 43 000 €/m²) : vente groupée inutilisable</td>
+</tr>
+</tbody>
+</table>
+<p><strong>La solution.</strong> Ne garder que les ventes d’<strong>un seul</strong> logement (ou local), puis seulement la ligne de ce logement.</p>
+<p><strong>Étape 1 : compter les biens de chaque vente</strong></p>
+<ol type="1">
+<li><p>Ouvrir la table attributaire de <code>dvf_ventes_brutes</code>.</p></li>
+<li><p>Ouvrir la <strong>Calculatrice de champs</strong> (icône boulier, ou Ctrl+I).</p></li>
+<li><p>Cocher <strong>Créer un nouveau champ</strong>.</p></li>
+<li><p>Nom du champ en sortie : <code>nb_biens</code> ; type : <strong>Nombre entier</strong>.</p></li>
+<li><p>Expression :</p>
+<pre><code>count("id_mutation",
+      group_by:="id_mutation",
+      filter:="type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé'))</code></pre></li>
+<li><p>Vérifier l’<strong>Aperçu du résultat</strong> sous la zone de saisie (un nombre doit s’afficher), puis <strong>OK</strong>.</p></li>
+<li><p>Enregistrer les modifications (icône crayon, puis enregistrer).</p></li>
+</ol>
+<p>Contrôle : trier la table par <code>id_mutation</code>. Les 18 lignes de <code>2021-1296940</code> doivent afficher <code>nb_biens = 9</code> ; les 3 lignes de <code>2021-1311764</code> doivent afficher <code>nb_biens = 1</code>.</p>
+<blockquote class="blockquote">
+<p>Ce que fait l’expression : pour chaque ligne, elle compte les logements et locaux de <strong>la vente à laquelle appartient cette ligne</strong>. Le <code>filter</code> est indispensable : sans lui, les caves, parkings et lignes de terrain seraient comptés, et on ne garderait que 587 ventes d’appartement au lieu de 6 352.</p>
+</blockquote>
+<p><strong>Étape 2 : ne garder qu’une ligne par vente</strong></p>
+<ol type="1">
+<li><p><strong>Boîte à outils de traitements › Sélection de vecteur › Extraire par expression</strong>.</p></li>
+<li><p>Couche source : <code>dvf_ventes_brutes</code>.</p></li>
+<li><p>Expression :</p>
+<pre><code>"nature_mutation" = 'Vente'
+AND "nb_biens" = 1
+AND "type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé')</code></pre></li>
+<li><p>Exécuter. Une <strong>nouvelle couche</strong> (« Correspondant ») est créée ; la couche d’origine ne change pas.</p></li>
+</ol>
+<p>Résultat attendu : une ligne par vente d’un seul logement ou local (la ligne de ce bien ; caves, parkings et terrains sont écartés). Maisons, appartements et locaux sont encore mélangés : c’est l’objet de la limite 2.</p>
+<blockquote class="blockquote">
+<p>Attention : la <strong>Calculatrice de champs</strong> n’enlève jamais de ligne, elle ajoute une colonne. Seul <strong>Extraire par expression</strong> (ou <strong>Sélectionner par expression</strong> suivi d’un export des entités sélectionnées) retire des lignes.</p>
+</blockquote>
+<hr>
+</section>
+<section id="limite-2-la-surface-bâtie-ne-mesure-pas-la-même-chose-pour-une-maison-et-un-appartement" class="level5">
+<h5 class="anchored" data-anchor-id="limite-2-la-surface-bâtie-ne-mesure-pas-la-même-chose-pour-une-maison-et-un-appartement">Limite 2 : la surface bâtie ne mesure pas la même chose pour une maison et un appartement</h5>
+<p><strong>Le problème.</strong> <code>surface_reelle_bati</code> est la seule surface remplie partout (100 % des ventes d’appartements et de maisons, contre 60 % pour la surface Carrez des appartements et 11 % pour celle des maisons). C’est donc elle qu’on utilise pour le prix au m². C’est bien la surface du logement <strong>tous étages confondus</strong>, pas l’emprise au sol : une maison de 5 pièces fait 102 m² en médiane. Mais pour une maison, le prix au m² est <strong>surestimé</strong> :</p>
+<ul>
+<li><strong>le terrain est inclus dans le prix</strong> (330 à 530 m² en médiane selon la taille de la maison), pas dans la surface ;</li>
+<li>garage et dépendances sont dans le prix, pas dans la surface.</li>
+</ul>
+<p><strong>La solution.</strong> Ne <strong>jamais mélanger</strong> maisons et appartements dans un même prix au m² : un type de bien par carte.</p>
+<p><strong>Étape 1 : ne garder qu’un type de bien</strong> (sur la couche issue de la limite 1)</p>
+<ol type="1">
+<li><p><strong>Extraire par expression</strong> :</p>
+<pre><code>"type_local" = 'Appartement'</code></pre></li>
+</ol>
+<p>Résultat attendu : <strong>6 352 ventes</strong>, une par vente d’appartement.</p>
+<p><strong>Étape 2 : calculer le prix au m²</strong></p>
+<ol type="1">
+<li><p>Ouvrir la <strong>Calculatrice de champs</strong> sur la couche des 6 352 ventes.</p></li>
+<li><p>Créer un nouveau champ <code>prix_m2</code>, type <strong>Nombre décimal (réel)</strong>.</p></li>
+<li><p>Expression :</p>
+<pre><code>"valeur_fonciere" / "surface_reelle_bati"</code></pre></li>
+</ol>
+<hr>
+</section>
+<section id="limite-3-les-prix-des-ventes-comprennent-des-valeurs-aberrantes-prix-symboliques-erreurs-de-saisie" class="level5">
+<h5 class="anchored" data-anchor-id="limite-3-les-prix-des-ventes-comprennent-des-valeurs-aberrantes-prix-symboliques-erreurs-de-saisie">Limite 3 : les prix des ventes comprennent des valeurs aberrantes (prix symboliques, erreurs de saisie)</h5>
+<p><strong>Ecarter les valeurs aberrantes</strong></p>
+<ol type="1">
+<li><p><strong>Extraire par expression</strong> :</p>
+<pre><code>"surface_reelle_bati" &gt;= 10
+AND "prix_m2" BETWEEN 1000 AND 10000</code></pre></li>
+</ol>
+<p>Résultat attendu : <strong>6 320 ventes</strong> (dont une quarantaine sans coordonnées, qui ne tomberont dans aucune maille).</p>
+<hr>
+</section>
+<section id="limite-4-le-prix-est-celui-de-toute-la-vente-pas-du-seul-bien" class="level5">
+<h5 class="anchored" data-anchor-id="limite-4-le-prix-est-celui-de-toute-la-vente-pas-du-seul-bien">Limite 4 : le prix est celui de toute la vente, pas du seul bien</h5>
+<p><strong>Le problème.</strong> Une fois la ligne de l’appartement isolée, <code>valeur_fonciere</code> reste le <strong>prix total payé</strong> : il inclut la cave, le parking ou la part de terrain vendus avec, alors que la surface ne concerne que l’appartement. <strong>91 % des ventes d’appartements retenues comprennent au moins une dépendance.</strong> DVF ne donne pas la valeur de chaque bien : impossible de soustraire le prix du parking.</p>
+<p><strong>S’il est difficile de trouver une solution à ce problème, il est important de garder cette limite en tête.</strong></p>
+<hr>
+</section>
+</section>
+<section id="méthode-b-en-sql-avec-une-couche-virtuelle-rapide-en-une-seule-étape" class="level4">
+<h4 class="anchored" data-anchor-id="méthode-b-en-sql-avec-une-couche-virtuelle-rapide-en-une-seule-étape">Méthode B : en SQL avec une couche virtuelle (rapide, en une seule étape)</h4>
+<p>La requête SQL ne compte qu’une seule fois et s’exécute en quelques secondes.</p>
+<ol type="1">
+<li><p>Menu <strong>Couche › Créer une couche › Nouvelle couche virtuelle…</strong> &gt; Nom de la couche <code>dvf_filtrer_groupe</code></p></li>
+<li><p>Dans <strong>Couches intégrées</strong>, cliquer sur <strong>Importer…</strong>, choisir <code>dvf_ventes_brutes</code>, puis <strong>OK</strong>. Vérifier que son <strong>Nom local</strong> est bien <code>dvf_ventes_brutes</code> : c’est le nom à utiliser dans la requête. S’il est différent (par exemple <code>dvf_ca_pvm_2021_2025_etudiants — dvf_ventes_brutes</code>), le renommer <code>dvf_ventes_brutes</code> en double-cliquant dessus.</p></li>
+<li><p>Coller la requête dans la zone <strong>Requête</strong> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> <span class="op">*</span>, valeur_fonciere <span class="op">/</span> surface_reelle_bati <span class="kw">AS</span> prix_m2</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> dvf_ventes_brutes</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> nature_mutation <span class="op">=</span> <span class="st">'Vente'</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> type_local <span class="op">=</span> <span class="st">'Appartement'</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> surface_reelle_bati <span class="op">&gt;=</span> <span class="dv">10</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> id_mutation <span class="kw">IN</span> (</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span> id_mutation</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span> dvf_ventes_brutes</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">WHERE</span> type_local <span class="kw">IN</span> (<span class="st">'Appartement'</span>,<span class="st">'Maison'</span>,<span class="st">'Local industriel. commercial ou assimilé'</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">GROUP</span> <span class="kw">BY</span> id_mutation</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">HAVING</span> <span class="fu">count</span>(<span class="op">*</span>) <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> prix_m2 <span class="kw">BETWEEN</span> <span class="dv">1000</span> <span class="kw">AND</span> <span class="dv">10000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Dans <strong>Géométrie</strong>, choisir <strong>Autodétecter</strong> (ou : colonne <code>geom</code>, type Point, SCR EPSG:2154).</p></li>
+<li><p>Cliquer sur <strong>Test</strong> (aucune erreur ne doit s’afficher), puis sur <strong>Ajouter</strong>.</p></li>
+<li><p>Une couche virtuelle apparaît. Elle est recalculée à chaque affichage : la <strong>sauvegarder en GeoPackage</strong> (clic droit › Exporter › Sauvegarder les entités sous…) et travailler ensuite sur ce fichier.</p></li>
+</ol>
+<p>Résultat attendu : <strong>6 320 lignes</strong>, avec un champ <code>prix_m2</code> prêt pour la jointure avec la grille.</p>
+</section>
+<section id="récapitulatif-de-la-chaîne-de-traitement" class="level4">
+<h4 class="anchored" data-anchor-id="récapitulatif-de-la-chaîne-de-traitement">Récapitulatif de la chaîne de traitement</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Outil QGIS</th>
+<th>Expression</th>
+<th>Lignes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>Couche brute</td>
+<td></td>
+<td>41 508</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>Calculatrice de champs (<code>nb_biens</code>, entier)</td>
+<td><code>count("id_mutation", group_by:="id_mutation", filter:="type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé'))</code></td>
+<td>41 508</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>Extraire par expression</td>
+<td><code>"nature_mutation" = 'Vente' AND "nb_biens" = 1 AND "type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé')</code></td>
+<td>à recompter</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>Extraire par expression</td>
+<td><code>"type_local" = 'Appartement'</code></td>
+<td>6 352</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>Calculatrice de champs (<code>prix_m2</code>, réel)</td>
+<td><code>"valeur_fonciere" / "surface_reelle_bati"</code></td>
+<td>6 352</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td>Extraire par expression</td>
+<td><code>"surface_reelle_bati" &gt;= 10 AND "prix_m2" BETWEEN 1000 AND 10000</code></td>
+<td>6 320</td>
+</tr>
+<tr class="odd">
+<td>1-5</td>
+<td>Couche virtuelle (méthode B)</td>
+<td>Requête SQL « toute la chaîne » de la limite 1</td>
+<td>6 320</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 </section>
 </section>
 
