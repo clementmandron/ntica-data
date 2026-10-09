@@ -250,6 +250,12 @@ ul.task-list li input[type="checkbox"] {
 <li>Calculer les variables sur les ventes
 <ul>
 <li>Libre à vous de décider quelle variable représenter (évolution 2021-2025 ? prix au m2 ?)</li>
+<li><ol type="1">
+<li><code>count("id_mutation", group_by:="id_mutation", filter:="type_local" IN ('Appartement','Maison','Local industriel. commercial ou assimilé')) = 1</code></li>
+</ol></li>
+<li><ol start="2" type="1">
+<li><code>"type_local" = 'Appartement'</code></li>
+</ol></li>
 </ul></li>
 <li>Créer une grille et agréger les données des ventes sur la grille</li>
 <li>[Option] Ajouter un 2e cadre de carte avec le prix médian par commune</li>
