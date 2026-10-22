@@ -194,7 +194,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#les-emplacements-réservés" id="toc-les-emplacements-réservés" class="nav-link" data-scroll-target="#les-emplacements-réservés">Les emplacements réservés</a>
   <ul class="collapse">
   <li><a href="#une-page" id="toc-une-page" class="nav-link" data-scroll-target="#une-page">Une page</a></li>
-  <li><a href="#pleins-de-pages" id="toc-pleins-de-pages" class="nav-link" data-scroll-target="#pleins-de-pages">Pleins de pages</a></li>
+  <li><a href="#plein-de-pages" id="toc-plein-de-pages" class="nav-link" data-scroll-target="#plein-de-pages">Plein de pages</a></li>
   </ul></li>
   <li><a href="#références" id="toc-références" class="nav-link" data-scroll-target="#références">Références</a>
   <ul class="collapse">
@@ -292,7 +292,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="../resources/plu-bio/parametres_transformation.jpeg" class="img-fluid"></p>
 <p>Puis, avec l’outil prévu à cet effet, sélectionner des points de contrôle, en cliquant successivement sur un point de l’image puis le même point sur la carte. On peut ici se contenter de <strong>trois points</strong> non alignés et distants les uns des autres. À partir de 3 points, QGIS calcule les erreurs de géoréférencement : en règle générale, il est bon d’avoir des écarts inférieurs à 10 pixels.</p>
 <p><img src="../resources/plu-bio/points-de-controles.jpeg" class="img-fluid"></p>
-<p>Les points de contrôles utilisés dans l’image ci-dessous sont téléchargeables <a href="../resources/plu-bio/D_05.jpg.points">ici</a>. On peut les charger si on le souhaite.</p>
+<p>Les points de contrôles utilisés dans l’image ci-dessus sont téléchargeables <a href="../resources/plu-bio/D_05.jpg.points">ici</a>. On peut les charger si on le souhaite.</p>
 <p>Appliquer ensuite la transformation. La carte s’affiche à son emplacement dans Paris, on peut vérifier la qualité du géoréférencement en affichant notre couche de référence et en appliquant une légère transparence à l’image recalée.</p>
 <p><img src="../resources/plu-bio/carte_georeferencee.jpeg" class="img-fluid"></p>
 </section>
@@ -315,69 +315,81 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="plein-de-planches" class="level3">
 <h3 class="anchored" data-anchor-id="plein-de-planches">Plein de planches</h3>
 <p>Nous avons traité une seule planche. Comment pourrait-on procéder si l’on voulait géoréférencer <strong>toutes</strong> les planches du PLU ? Il y a heureusement des solutions pour automatiser ce qu’on vient de faire manuellement, on va les esquisser ci-dessous.</p>
+<p>Le traitement des planches consiste donc en quatre étapes :</p>
+<ol type="1">
+<li>Le téléchargement</li>
+<li>Le traitement : convertir et découper les planches</li>
+<li>Le géoréférencement : créer les fichiers World</li>
+<li>Le chargement dans QGIS</li>
+</ol>
+<p>Pour les trois premières étapes, vous avez une correction disponible en ligne de commande. Néanmoins, vous allez d’abord essayer d’utiliser les outils d’intelligence artificielle pour réaliser ces tâches.</p>
+<p>Schématiquement, il existe deux moyens d’utiliser les IA pour le traitement de données :</p>
+<p>Le <strong>premier</strong> est d’utiliser directement les outils IA “chat” (Claude, ChatGPT, Vibe…). Voir l’exemple ci-dessous, où on a demandé directement dans Claude d’extraire les liens de la liste de toutes les planches. Claude a effectivement produit un .csv exportable avec les planches extraites. En réalité, ce n’est pas le LLM seul qui a extrait les liens, mais il a généré du code, puis l’a exécuté en autonomie pour le faire (on le voit dans les détails de la capture d’écran). C’est ce qui nous mène au deuxième moyen de traiter de la donnée avec l’IA.</p>
+<p><img src="../resources/plu-bio/claude1.png" class="img-fluid"></p>
+<p>Le <strong>second</strong> est d’utiliser les outils pour générer du code Python que l’on va exécuter sur nos ordinateurs. C’est ce code qui effectuera l’extraction. <strong>Même sans connaissance en Python,</strong> vous pouvez utiliser l’IA pour vous guider, comprendre les erreurs qui s’affichent et arriver à votre but (en tout cas pour les traitements simples).</p>
 <section id="téléchargement-1" class="level4">
 <h4 class="anchored" data-anchor-id="téléchargement-1">Téléchargement</h4>
 <p>On voit sur le site du PLU qu’un fichier avec la <a href="https://regles-urbanisme.paris.fr/plu-bioclimatique/servlet/plugins/document/resource?id=751&amp;id_attribute=93&amp;working_content=true">liste des planches</a> est disponible.</p>
 <p>C’est un fichier PDF qui contient les liens vers chacune des 134 planches. Problème : ils ne sont pas apparents… On doit donc les extraire.</p>
 <ul>
 <li>Solution sans code : extraction avec un utilitaire en ligne comme <a href="https://supertool.org/fr/extract-urls-and-links-from-pdfs/">Supertool</a>.</li>
-<li>Solution avec code : extraction avec un mini script en ligne de commande qui utilise la libraire <a href="https://github.com/pymupdf/pymupdf"><code>PyMuPDF</code></a>.</li>
-<li>Solution avec code et l’aide d’un LLM : demander un assistant IA (ChatGPT, Claude, Vibe…) d’écrire des scripts Python pour effectuer les traitements</li>
+<li>Solution avec code : à vous de jouer avec l’aide de l’outil IA de votre choix.</li>
 </ul>
-<div id="75f7e793" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymupdf</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> pymupdf.<span class="bu">open</span>(<span class="st">'Consultation_des_planches_au_1_sur_2000.pdf'</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> page <span class="kw">in</span> doc:</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   <span class="cf">for</span> link <span class="kw">in</span> page.get_links():</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>       url <span class="op">=</span> link[<span class="st">'uri'</span>]</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>       <span class="co"># Do something with url</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Voici un <a href="../resources/plu-bio/liste_urls.txt">fichier texte</a> avec la liste des liens extraits. Mais on voit qu’ils sont cassés : le prestataire IT de la Ville de Paris (dont le nom figure dans les métadonnées du PDF) a oublié de substituer au nom du serveur de test celui utilisé en production !</p>
-<p>On peut s’en charger grâce à la commande Find/Replace d’un éditeur de texte</p>
-<p><img src="../resources/plu-bio/liste_urls_replace_all.jpeg" class="img-fluid"></p>
 <details>
 <summary>
 Correction : en ligne de commande
 </summary>
+<p>Voici un <a href="../resources/plu-bio/liste_urls.txt">fichier texte</a> avec la liste des liens déjà extraits. Mais on voit qu’ils sont cassés : le prestataire IT de la Ville de Paris (dont le nom figure dans les métadonnées du PDF) a oublié de substituer au nom du serveur de test celui utilisé en production !</p>
+<p>On peut s’en charger grâce à la commande Find/Replace d’un éditeur de texte, mais ce serait long.</p>
+<p><img src="../resources/plu-bio/liste_urls_replace_all.jpeg" class="img-fluid"></p>
 <p>Il est également possible de changer les liens et télécharger tous les fichiers avec une boucle en ligne de commande. On crée d’abord un fichier <code>liste_urls_corrigees.txt</code> avec les bons liens, puis on télécharge les planches dans un dossier <code>planches</code>.</p>
 <p><strong>Sous Windows (PowerShell)</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-Content</span> liste_urls<span class="op">.</span><span class="fu">txt</span><span class="op">)</span> <span class="op">-replace</span> <span class="st">'k04-siteplubioclimatique\.form\.apps\.paris\.mdp'</span><span class="op">,</span><span class="st">'regles-urbanisme.paris.fr'</span> <span class="op">|</span> <span class="fu">Set-Content</span> liste_urls_corrigees<span class="op">.</span><span class="fu">txt</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mkdir planches</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Content</span> liste_urls_corrigees<span class="op">.</span><span class="fu">txt</span> <span class="op">|</span> <span class="fu">ForEach-Object</span> <span class="op">{</span> <span class="fu">curl</span><span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>OJ <span class="op">--</span>output-dir planches <span class="va">$_</span> <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-Content</span> liste_urls<span class="op">.</span><span class="fu">txt</span><span class="op">)</span> <span class="op">-replace</span> <span class="st">'k04-siteplubioclimatique\.form\.apps\.paris\.mdp'</span><span class="op">,</span><span class="st">'regles-urbanisme.paris.fr'</span> <span class="op">|</span> <span class="fu">Set-Content</span> liste_urls_corrigees<span class="op">.</span><span class="fu">txt</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mkdir planches</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Content</span> liste_urls_corrigees<span class="op">.</span><span class="fu">txt</span> <span class="op">|</span> <span class="fu">ForEach-Object</span> <span class="op">{</span> <span class="fu">curl</span><span class="op">.</span><span class="fu">exe</span> <span class="op">-</span>OJ <span class="op">--</span>output-dir planches <span class="va">$_</span> <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Sous macOS / Linux</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-e</span> <span class="st">'s/k04-siteplubioclimatique.form.apps.paris.mdp/regles-urbanisme.paris.fr/'</span> liste_urls.txt <span class="op">&gt;</span> liste_urls_corrigees.txt</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> planches</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="at">-r</span> <span class="va">url</span><span class="kw">;</span> <span class="cf">do</span> <span class="fu">wget</span> <span class="at">--content-disposition</span> <span class="at">-P</span> planches <span class="st">"</span><span class="va">$url</span><span class="st">"</span><span class="kw">;</span> <span class="cf">done</span> <span class="op">&lt;</span> liste_urls_corrigees.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-e</span> <span class="st">'s/k04-siteplubioclimatique.form.apps.paris.mdp/regles-urbanisme.paris.fr/'</span> liste_urls.txt <span class="op">&gt;</span> liste_urls_corrigees.txt</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> planches</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="at">-r</span> <span class="va">url</span><span class="kw">;</span> <span class="cf">do</span> <span class="fu">wget</span> <span class="at">--content-disposition</span> <span class="at">-P</span> planches <span class="st">"</span><span class="va">$url</span><span class="st">"</span><span class="kw">;</span> <span class="cf">done</span> <span class="op">&lt;</span> liste_urls_corrigees.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Sous macOS, <code>wget</code> n’est pas toujours installé : on peut le remplacer par <code>curl -OJ --output-dir planches "$url"</code>.</p>
 </details>
 </section>
 <section id="traitement-1" class="level4">
 <h4 class="anchored" data-anchor-id="traitement-1">Traitement</h4>
 <p>Toutes les planches PDF sont bâties sur le même modèle, il est donc aisé d’automatiser la conversion en JPG et le rognage du cartouche.</p>
-<p>Photoshop sait très bien le faire, GIMP également, mais avec un plugin. Le plus rapide est d’utiliser <a href="https://imagemagick.org/">ImageMagick</a> en ligne de commande. Pour lire des PDF, il a aussi besoin de <a href="https://ghostscript.com/">Ghostscript</a>.</p>
+<p>Photoshop sait très bien le faire, GIMP également, mais avec un plugin.</p>
+<p>Essayez de générer du code pour traiter les 134 planches. Il faudra :</p>
+<ul>
+<li>Convertir les planches PDF en JPG, à une résolution de <strong>300 dpi</strong></li>
+<li>Rogner les planches. Pour vous aider, à 300 dpi, la zone à conserver fait 6492 × 4720 pixels et commence à 232 pixels du bord gauche et 136 pixels du bord haut (<code>6492x4720+232+136</code> en syntaxe ImageMagick)</li>
+</ul>
+<details>
+<summary>
+Correction : en ligne de commande
+</summary>
+<p>Le plus rapide est d’utiliser <a href="https://imagemagick.org/">ImageMagick</a> en ligne de commande. Pour lire des PDF, il a aussi besoin de <a href="https://ghostscript.com/">Ghostscript</a>.</p>
 <p><strong>Installation</strong></p>
 <p>Sous Windows (PowerShell), puis fermer et rouvrir le terminal :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>winget install ImageMagick<span class="op">.</span><span class="fu">ImageMagick</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>winget install ArtifexSoftware<span class="op">.</span><span class="fu">GhostScript</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>winget install ImageMagick<span class="op">.</span><span class="fu">ImageMagick</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>winget install ArtifexSoftware<span class="op">.</span><span class="fu">GhostScript</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Sous macOS (avec <a href="https://brew.sh/">Homebrew</a>) :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install imagemagick ghostscript</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install imagemagick ghostscript</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Sous Linux (Debian/Ubuntu) :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install imagemagick ghostscript</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install imagemagick ghostscript</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Conversion et rognage</strong></p>
-<p>Pour les curieux, la commande pour convertir et recadrer un seul fichier PDF, par exemple <code>D_05.pdf</code> :</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">magick</span> <span class="at">-density</span> 300 D_05.pdf <span class="at">-crop</span> 6492x4720+232+136 +repage crop/D_05.jpg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Pour vous aider, la commande pour convertir et recadrer un seul fichier PDF, par exemple <code>D_05.pdf</code> :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">magick</span> <span class="at">-density</span> 300 D_05.pdf <span class="at">-crop</span> 6492x4720+232+136 +repage crop/D_05.jpg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Pour traiter toutes les planches du dossier <code>planches</code> d’un coup :</p>
 <p><em>Sous Windows (PowerShell)</em></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mkdir crop</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> planches\<span class="op">*.</span><span class="fu">pdf</span> <span class="op">|</span> <span class="fu">ForEach-Object</span> <span class="op">{</span> magick <span class="op">-</span>density <span class="dv">300</span> <span class="va">$_</span><span class="op">.</span><span class="fu">FullName</span> <span class="op">-</span>crop 6492x4720<span class="op">+</span><span class="dv">232</span><span class="op">+</span><span class="dv">136</span> <span class="op">+</span>repage <span class="st">"crop\</span><span class="op">$(</span><span class="va">$_</span><span class="op">.</span><span class="fu">BaseName</span><span class="op">)</span><span class="st">.jpg"</span> <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mkdir crop</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> planches\<span class="op">*.</span><span class="fu">pdf</span> <span class="op">|</span> <span class="fu">ForEach-Object</span> <span class="op">{</span> magick <span class="op">-</span>density <span class="dv">300</span> <span class="va">$_</span><span class="op">.</span><span class="fu">FullName</span> <span class="op">-</span>crop 6492x4720<span class="op">+</span><span class="dv">232</span><span class="op">+</span><span class="dv">136</span> <span class="op">+</span>repage <span class="st">"crop\</span><span class="op">$(</span><span class="va">$_</span><span class="op">.</span><span class="fu">BaseName</span><span class="op">)</span><span class="st">.jpg"</span> <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><em>Sous macOS / Linux</em></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> crop</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> planches/<span class="pp">*</span>.pdf<span class="kw">;</span> <span class="cf">do</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">magick</span> <span class="at">-density</span> 300 <span class="st">"</span><span class="va">$f</span><span class="st">"</span> <span class="at">-crop</span> 6492x4720+232+136 +repage <span class="st">"crop/</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">${f</span><span class="op">%</span>.pdf<span class="va">}</span><span class="st">"</span><span class="va">)</span><span class="st">.jpg"</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> crop</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> planches/<span class="pp">*</span>.pdf<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">magick</span> <span class="at">-density</span> 300 <span class="st">"</span><span class="va">$f</span><span class="st">"</span> <span class="at">-crop</span> 6492x4720+232+136 +repage <span class="st">"crop/</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">${f</span><span class="op">%</span>.pdf<span class="va">}</span><span class="st">"</span><span class="va">)</span><span class="st">.jpg"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Pour vérifier que tout est passé, il doit y avoir 134 images dans le dossier <code>crop</code>.</p>
+</details>
 </section>
 <section id="géoréférencement-1" class="level4">
 <h4 class="anchored" data-anchor-id="géoréférencement-1">Géoréférencement</h4>
@@ -389,10 +401,46 @@ Correction : en ligne de commande
 <li>Télécharger le fichier <a href="https://www.normalesup.org/~gmercier/E_05.jpg"><code>E_05.jpg</code></a>.</li>
 <li>Copier le fichier <code>D_05.wld</code> en un fichier <code>E_05.wld</code></li>
 <li>Ouvrir le fichier <code>E_05.wld</code> et ajouter 1000 au nombre de la 5e ligne</li>
-<li>Ajouter la couche <code>E_05.jpg</code> dans QGIS : <strong>Couches &gt; Ajouter une couche Raster</strong></li>
+<li>Ajouter la couche <code>E_05.jpg</code> dans QGIS : <strong>Couche &gt; Ajouter une couche raster</strong></li>
 </ul>
 <p>Miracle : la couche est parfaitement ajustée !</p>
 <p><img src="../resources/plu-bio/ajustement_parfait.jpeg" class="img-fluid"></p>
+<p>Il ne reste plus qu’à généraliser à toutes les planches. Le nom de chaque planche donne sa position dans la grille :</p>
+<ul>
+<li>la <strong>lettre</strong> indique la colonne : chaque lettre décale la planche de 1000 m vers l’est (5<sup>e</sup> ligne du fichier World) ;</li>
+<li>le <strong>numéro</strong> indique la ligne : chaque numéro décale la planche de 750 m vers le sud (6<sup>e</sup> ligne, que l’on diminue).</li>
+</ul>
+<p>En partant de <code>D_05</code>, on peut donc écrire automatiquement un fichier World à côté de chaque image du dossier <code>crop</code>.</p>
+<p>À vous de jouer : générez un script qui crée les fichiers World dans le même dossier que les images rognées.</p>
+<details>
+<summary>
+Correction : en ligne de commande
+</summary>
+<p><em>Sous Windows (PowerShell)</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">$A</span> <span class="op">=</span> <span class="dv">0.16930172784192851</span><span class="op">;</span> <span class="va">$D</span> <span class="op">=</span> <span class="op">-</span><span class="dv">0.16935420946301658</span>   <span class="co"># échelle (fichier de D_05)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="va">$E0</span> <span class="op">=</span> <span class="dv">647770.36883201031</span><span class="op">;</span> <span class="va">$F0</span> <span class="op">=</span> <span class="dv">6864154.76399315055</span>   <span class="co"># coin supérieur gauche de D_05</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> crop\<span class="op">*.</span><span class="fu">jpg</span> <span class="op">|</span> <span class="fu">ForEach-Object</span> <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="va">$lettre</span><span class="op">,</span> <span class="va">$numero</span> <span class="op">=</span> <span class="va">$_</span><span class="op">.</span><span class="fu">BaseName</span> <span class="op">-split</span> <span class="st">'_'</span>                  <span class="co"># "E_05" -&gt; "E", "05"</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="va">$E</span> <span class="op">=</span> <span class="va">$E0</span> <span class="op">+</span> <span class="op">([</span><span class="dt">int</span><span class="op">][</span><span class="dt">char</span><span class="op">]</span><span class="va">$lettre</span> <span class="op">-</span> <span class="op">[</span><span class="dt">int</span><span class="op">][</span><span class="dt">char</span><span class="op">]</span><span class="st">'D'</span><span class="op">)</span> <span class="op">*</span> <span class="dv">1000</span>    <span class="co"># 1000 m par lettre vers l'est</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="va">$F</span> <span class="op">=</span> <span class="va">$F0</span> <span class="op">-</span> <span class="op">([</span><span class="dt">int</span><span class="op">]</span><span class="va">$numero</span> <span class="op">-</span> <span class="dv">5</span><span class="op">)</span> <span class="op">*</span> <span class="dv">750</span>                        <span class="co"># 750 m par numéro vers le sud</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="va">$A</span><span class="ch">`n</span><span class="st">0</span><span class="ch">`n</span><span class="st">0</span><span class="ch">`n</span><span class="va">$D</span><span class="ch">`n</span><span class="va">$E</span><span class="ch">`n</span><span class="va">$F</span><span class="st">"</span> <span class="op">|</span> <span class="fu">Set-Content</span> <span class="st">"crop\</span><span class="op">$(</span><span class="va">$_</span><span class="op">.</span><span class="fu">BaseName</span><span class="op">)</span><span class="st">.wld"</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Sous macOS / Linux</em></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> crop/<span class="pp">*</span>.jpg<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="va">nom</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">$f</span><span class="st">"</span> .jpg<span class="va">)</span>                     <span class="co"># ex : E_05</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">awk</span> <span class="at">-v</span> l=<span class="st">"</span><span class="va">${nom</span><span class="op">%</span>_<span class="pp">*</span><span class="va">}</span><span class="st">"</span> <span class="at">-v</span> n=<span class="st">"</span><span class="va">${nom</span><span class="op">#</span><span class="pp">*</span>_<span class="va">}</span><span class="st">"</span> <span class="st">'BEGIN {</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">    E = 647770.36883201 + (index("ABCDEFGHIJKLM", l) - 4) * 1000</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="st">    F = 6864154.76399315 - (n - 5) * 750</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="st">    printf "0.16930172784192851\n0\n0\n-0.16935420946301658\n%.8f\n%.8f\n", E, F</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="st">  }'</span> <span class="op">&gt;</span> <span class="st">"crop/</span><span class="va">$nom</span><span class="st">.wld"</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>awk</code> sert ici à faire les calculs avec des décimales, ce que bash ne sait pas faire seul.</p>
+<p>Le dossier <code>crop</code> doit maintenant contenir 134 fichiers <code>.wld</code>, et <code>E_05.wld</code> doit être identique à celui créé à la main.</p>
+</details>
+</section>
+<section id="chargement" class="level4">
+<h4 class="anchored" data-anchor-id="chargement">Chargement</h4>
+<p>Pour afficher toutes les planches dans QGIS, sélectionner toutes les images <code>.jpg</code> du dossier <code>crop</code> dans l’explorateur de fichiers et les glisser-déposer dans QGIS. On obtient 134 couches, chacune à sa place : le PLU complet de Paris est recalé.</p>
 </section>
 </section>
 </section>
@@ -421,7 +469,7 @@ Correction : en ligne de commande
 <p>Plusieurs options s’offrent à nous :</p>
 <ul>
 <li>Si on dispose d’<strong>Acrobat Pro</strong> (version payante du célèbre lecteur de PDF), on peut utiliser la fonction Scan et OCR.</li>
-<li>Si on aime les GAFAM, on peut recourir à <strong>un LLM généraliste</strong> comme ChatGPT, Gemini, DeepSeek ou Le Chat.</li>
+<li>On peut recourir à <strong>un LLM généraliste</strong> comme ChatGPT, Gemini, DeepSeek ou Le Chat.</li>
 </ul>
 <p><img src="../resources/plu-bio/ocr_gemini.jpeg" class="img-fluid"></p>
 <ul>
@@ -446,8 +494,8 @@ Correction : en ligne de commande
 <p><img src="../resources/plu-bio/geocodage_ban.jpeg" class="img-fluid"></p>
 <p>Le fichier géocodé est téléchargeable <a href="../resources/plu-bio/p51.pdf-clean.geocoded.csv">ici</a> en CSV si besoin.</p>
 </section>
-<section id="chargement" class="level4">
-<h4 class="anchored" data-anchor-id="chargement">Chargement</h4>
+<section id="chargement-1" class="level4">
+<h4 class="anchored" data-anchor-id="chargement-1">Chargement</h4>
 <p>Le fichier CSV géocodé s’ouvre directement avec QGIS.</p>
 <ul>
 <li><strong>Couche &gt; Ajouter une couche de texte délimité</strong></li>
@@ -460,16 +508,11 @@ Correction : en ligne de commande
 <p><img src="../resources/plu-bio/imprecisions.jpeg" class="img-fluid"></p>
 </section>
 </section>
-<section id="pleins-de-pages" class="level3">
-<h3 class="anchored" data-anchor-id="pleins-de-pages">Pleins de pages</h3>
-<p>Et si l’on devait traiter les 33 pages pour reconstituer l’ensemble du semis de points ? Quelques indications seulement sur ce que l’on pourrait faire :</p>
-<ul>
-<li>Utiliser l’API d’ExtractTable plutôt que l’interface graphique pour extraire en lot les données.</li>
-<li>Fusionner les fichiers CSV obtenus.</li>
-<li>Dédupliquer les lignes en détectant les doubles adresses avec une expression régulière.</li>
-</ul>
-<p>Voici la <a href="https://umap.openstreetmap.fr/fr/map/plub-carte-des-emplacements-reserves-logements_940982">carte</a> des emplacements réservés tels qu’ils étaient avant l’enquête publique, que j’avais constituée en 2023. Voici également la <a href="plub_carte_des_emplacements_reserves_logements_2023.geojson">couche</a> (au format GeoJSON) des données qu’elle représente.</p>
-<p>Chargez cette couche dans QGIS. Identifiez-vous sur la feuille D5 des emplacements réservés qui ont disparu après l’enquête publique ?…</p>
+<section id="plein-de-pages" class="level3">
+<h3 class="anchored" data-anchor-id="plein-de-pages">Plein de pages</h3>
+<p>Et si l’on devait traiter les 33 pages pour reconstituer l’ensemble du semis de points ? C’est ce que vous pouvez essayer de faire avec un script Python, à l’aide de l’IA.</p>
+<p>Voici la <a href="https://umap.openstreetmap.fr/fr/map/plub-carte-des-emplacements-reserves-logements_940982">carte</a> des emplacements réservés tels qu’ils étaient avant l’enquête publique, que j’avais constituée en 2023. Voici également la <a href="../resources/plu-bio/plub_carte_des_emplacements_reserves_logements_2023.geojson">couche</a> (au format GeoJSON) des données qu’elle représente.</p>
+<p>Chargez cette couche dans QGIS. Pouvez-vous identifier, sur la feuille D5, des emplacements réservés qui ont disparu après l’enquête publique ?…</p>
 <details>
 <summary>
 Solution
@@ -487,7 +530,7 @@ Solution
 <section id="bibliographie" class="level3">
 <h3 class="anchored" data-anchor-id="bibliographie">Bibliographie</h3>
 <p>À plusieurs reprises, nous avons eu recours à des programmes en ligne de commande pour automatiser des tâches.</p>
-<p>Pour en savoir plus sur la ligne de commande et apprendre à maîtriser le côté obsur de l’informatique, je recommande le livre <a href="https://www.h-k.fr/minimax.info.003LDCPE"><em>La ligne de commande par l’exemple</em></a>, de Céline Chevalier, Sébastien Desreux, Vincent Fourmond (Paris, H&amp;K, 2013). Un ouvrage accessible, pédagogique et drôle.</p>
+<p>Pour en savoir plus sur la ligne de commande et apprendre à maîtriser le côté obscur de l’informatique, je recommande le livre <a href="https://www.h-k.fr/minimax.info.003LDCPE"><em>La ligne de commande par l’exemple</em></a>, de Céline Chevalier, Sébastien Desreux, Vincent Fourmond (Paris, H&amp;K, 2013). Un ouvrage accessible, pédagogique et drôle.</p>
 <p><img src="../resources/plu-bio/ligne_commande_par_exemple.jpg" class="img-fluid" style="width:50.0%"></p>
 
 
